@@ -2,12 +2,6 @@ use wasm_bindgen::prelude::*;
 use image;
 use rqrr;
 
-const WIDTH: usize = 500;
-const HEIGHT: usize = 500;
-
-const IMAGE_BYTES_LEN: usize = WIDTH * HEIGHT * 4;
-
-static mut IMAGEBYTES:[u8;IMAGE_BYTES_LEN] = [0; IMAGE_BYTES_LEN];
 
 #[wasm_bindgen]
 extern {
@@ -24,30 +18,18 @@ pub mod console {
     }
 }
 
-#[no_mangle]
-pub fn get_image_pointer() -> *const u8 {
-    let pointer: *const u8;
-    unsafe {
-        pointer = IMAGEBYTES.as_ptr();
-    }
-
-    return pointer;
-}
-
 #[wasm_bindgen]
-pub fn image2link() {
-    let mut imgbuf = image::RgbaImage::new(WIDTH as u32,HEIGHT as u32);
-    unsafe {
-        for y in 0..(HEIGHT as u32) {
-            for x in 0..(WIDTH as u32) {
-                let i: usize = (WIDTH * (y as usize) + (x as usize)) * 4;
-                //console::log(&format!("{}", i));
-                let r: u8 = IMAGEBYTES[i];
-                let g: u8 = IMAGEBYTES[i+1];
-                let b: u8 = IMAGEBYTES[i+2];
-                let a: u8 = 255;
-                imgbuf.put_pixel(x,y, image::Rgba([r, g, b, a]));
-            }
+pub fn read_qr(buff:&mut [u8], height: usize, width: usize) {
+    let mut imgbuf = image::RgbaImage::new(width as u32,height as u32);
+    for y in 0..(height as u32) {
+        for x in 0..(width as u32) {
+            let i: usize = (width * (y as usize) + (x as usize)) * 4;
+            //console::log(&format!("{}", i));
+            let r: u8 = buff[i];
+            let g: u8 = buff[i+1];
+            let b: u8 = buff[i+2];
+            let a: u8 = 255;
+            imgbuf.put_pixel(x,y, image::Rgba([r, g, b, a]));
         }
     }
     let img2 = image::DynamicImage::ImageRgba8(imgbuf);
