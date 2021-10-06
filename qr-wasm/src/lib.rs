@@ -2,22 +2,6 @@ use wasm_bindgen::prelude::*;
 use image;
 use rqrr;
 
-
-#[wasm_bindgen]
-extern {
-    pub fn alert(s: &str);
-}
-
-pub mod console {
-    use wasm_bindgen::prelude::*;
-
-    #[wasm_bindgen]
-    extern {
-        #[wasm_bindgen(js_namespace = console)]
-        pub fn log(s:&str);
-    }
-}
-
 #[wasm_bindgen]
 pub fn read_qr(buff:&mut [u8], height: usize, width: usize) -> String {
     let mut returnstring: String = "".to_string();
@@ -34,10 +18,10 @@ pub fn read_qr(buff:&mut [u8], height: usize, width: usize) -> String {
         }
     }
     let img2 = image::DynamicImage::ImageRgba8(imgbuf);
-    let mut img3 = rqrr::PreparedImage::prepare(img2.to_luma());
+    let mut img3 = rqrr::PreparedImage::prepare(img2.to_luma8());
     let grids = img3.detect_grids();
     if grids.len() > 0 {
-        let (meta, content) = grids[0].decode().unwrap();
+        let (_meta, content) = grids[0].decode().unwrap();
         returnstring = content;
     }
     return returnstring;
