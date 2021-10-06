@@ -19,7 +19,8 @@ pub mod console {
 }
 
 #[wasm_bindgen]
-pub fn read_qr(buff:&mut [u8], height: usize, width: usize) {
+pub fn read_qr(buff:&mut [u8], height: usize, width: usize) -> String {
+    let mut returnstring: String = "".to_string();
     let mut imgbuf = image::RgbaImage::new(width as u32,height as u32);
     for y in 0..(height as u32) {
         for x in 0..(width as u32) {
@@ -37,6 +38,7 @@ pub fn read_qr(buff:&mut [u8], height: usize, width: usize) {
     let grids = img3.detect_grids();
     if grids.len() > 0 {
         let (meta, content) = grids[0].decode().unwrap();
-        alert(&format!("{}!", content));
+        returnstring = content;
     }
+    return returnstring;
 }
